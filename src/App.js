@@ -1,33 +1,56 @@
-import GameCard from "./GameCard";
+import { useState } from "react";
+import Header from "./components/Header";
+import Tasks from "./components/Tasks";
+import AddTask from "./components/AddTask";
 
-const gamesList = [
-  {
-    id: 0,
-    name: "Scythe", 
-    rating: null, 
-    category: "Fun"
-  }, 
-  {
-    id: 0,
-    name: "Machi Koro", 
-    rating: null, 
-    category: "Deck Building"
-  }, 
-  {
-    id: 0,
-    name: "Galaxy Trucker", 
-    rating: null, 
-    category: "Fun"
-  }
-]
+const App = () => {
+  const [showAddTask, setShowAddTask] = useState(false)
+  const [tasks, setTasks] = useState([
+    {
+        id: 1, 
+        text: 'Doctors Appointment',
+        reminder: true,
+    }, 
+    {
+        id: 2, 
+        text: 'Meeting at School',
+        day: 'Feb 6th at 1:30 pm',
+        reminder: true,
+    },
+    {
+        id: 3,
+        text: 'Food Shopping',
+        day: 'Feb 5th at 2:30pm',
+        reminder: false,
+    }
+])
 
-function App() {
-  return (
-    <div>
-      <h1>My Board Games</h1>
-      {gamesList.map( game => <GameCard game={game}/>)}
-    </div>
-  );
+// Add Task 
+const addTask = (task) => {
+  const id = Math.floor(Math.random() * 1000) + 1 
+
+  const newTask = { id, ...task}
+  setTasks([...tasks, newTask])
+}
+
+// Delete Task
+const deleteTask = (id) => {
+  console.log('delete', id)
+  setTasks(tasks.filter((task) => task.id !==id))
+}
+
+// Toggle Reminder
+const toggleReminder = (id) => {
+  setTasks(tasks.map((task) => task.id === id ? {...task, reminder: !task.reminder} : task))
+}
+
+return (
+  <div className="container">
+    <Header onAdd={() => setShowAddTask(!showAddTask)} showAdd={showAddTask}/>
+    {showAddTask && <AddTask onAdd={addTask}/> }
+    {tasks.length > 0 ? <Tasks tasks={tasks} onDelete={deleteTask} onToggle={toggleReminder}/> : 'No Tasks To Show'}
+  </div>
+);
 }
 
 export default App;
